@@ -1,0 +1,28 @@
+{% extends 'NBA/base.html' %}
+
+{% block title %}Edit Comment{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3>修改留言</h3>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="{% url 'NBA:edit_comment' comment.id %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="content" class="form-label">留言內容</label>
+                            <textarea class="form-control" id="content" name="content" rows="5" required>{{ comment.content }}</textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">儲存修改</button>
+                        <a href="{% url 'NBA:game_detail' comment.game.id %}" class="btn btn-secondary">取消</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

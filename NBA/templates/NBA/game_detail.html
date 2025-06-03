@@ -88,18 +88,21 @@
                     <span class="comment-author">{{ comment.author }}</span>
                     <span class="comment-time">{{ comment.created_at|date:"F j, Y g:i A" }}</span>
                 </div>
-                {% if user.is_staff %}
-                    <div class="comment-actions">
-                        <form method="post" action="{% url 'NBA:toggle_pin_comment' comment.id %}" style="display: inline;">
+                <div class="comment-actions">
+                    {% if user.is_staff %}
+                         <form method="post" action="{% url 'NBA:toggle_pin_comment' comment.id %}" style="display: inline;">
                             {% csrf_token %}
-                            <button type="submit" class="btn btn-sm btn-outline-secondary">{% if comment.is_pinned %}Unpin{% else %}Pin{% endif %}</button>
+                            <button type="submit" class="btn btn-sm btn-secondary">{% if comment.is_pinned %}Unpin{% else %}Pin{% endif %}</button>
                         </form>
                          <form method="post" action="{% url 'NBA:delete_comment' comment.id %}" style="display: inline;">
                             {% csrf_token %}
-                            <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                         </form>
-                    </div>
-                {% endif %}
+                    {% endif %}
+                    {% if user.is_authenticated and user.username == comment.author %}
+                         <a href="{% url 'NBA:edit_comment' comment.id %}" class="btn btn-sm btn-primary">修改</a>
+                    {% endif %}
+                </div>
             </div>
             <div class="comment-content">
                 {{ comment.content }}

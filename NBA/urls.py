@@ -11,6 +11,7 @@ urlpatterns = [
     path('add_comment/<int:game_id>/', views.add_comment, name='add_comment'),
     path('toggle_pin_comment/<int:comment_id>/', views.toggle_pin_comment, name='toggle_pin_comment'),
     path('delete_comment/<int:comment_id>/', views.delete_comment, name='delete_comment'),
+    path('edit_comment/<int:comment_id>/', views.edit_comment_view, name='edit_comment'),
     path('login/', auth_views.LoginView.as_view(
         template_name='NBA/login.html',
         redirect_authenticated_user=True,
