@@ -17,4 +17,5 @@ urlpatterns = [
         next_page='NBA:home'
     ), name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page='NBA:home'), name='logout'),
+    path('register/', views.register_view, name='register'),
 ] 

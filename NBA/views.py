@@ -7,6 +7,8 @@ from .models import Game, Player, Comment
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
 from django.views.decorators.http import require_POST
+from django.contrib.auth import login, authenticate
+from django.contrib import messages
 
 def home(request):
     games = Game.objects.all().order_by('-date')[:10]
@@ -78,3 +80,32 @@ def delete_comment(request, comment_id):
 def schedule(request):
     games = Game.objects.filter(date__gte=timezone.now()).order_by('date')
     return render(request, 'NBA/schedule.html', {'games': games})
+
+def register_view(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        password1 = request.POST.get('password1')
+        password2 = request.POST.get('password2')
+        
+        # 驗證密碼是否匹配
+        if password1 != password2:
+            return render(request, 'NBA/login.html', {'error_message': '兩次輸入的密碼不相符', 'show_register': True})
+        
+        # 檢查使用者名稱是否已存在
+        if User.objects.filter(username=username).exists():
+            return render(request, 'NBA/login.html', {'error_message': '使用者名稱已被使用', 'show_register': True})
+        
+        # 檢查電子郵件是否已存在
+        if User.objects.filter(email=email).exists():
+            return render(request, 'NBA/login.html', {'error_message': '電子郵件已被註冊', 'show_register': True})
+        
+        # 創建新用戶
+        try:
+            user = User.objects.create_user(username=username, email=email, password=password1)
+            login(request, authenticate(username=username, password=password1))
+            return redirect('NBA:home')
+        except Exception as e:
+            return render(request, 'NBA/login.html', {'error_message': f'註冊失敗：{str(e)}', 'show_register': True})
+    
+    return redirect('NBA:login')
