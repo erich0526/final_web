@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}NBA Stats{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'NBA/css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- 導航欄 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{% url 'NBA:home' %}" class="logo">NBA Stats</a>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="{% url 'NBA:home' %}">Home</a></li>
+                <li class="nav-item"><a href="{% url 'NBA:schedule' %}">Schedule</a></li>
+                {% if user.is_authenticated %}
+                    <li class="nav-item"><a href="{% url 'NBA:logout' %}">Logout</a></li>
+                {% else %}
+                    <li class="nav-item"><a href="{% url 'NBA:login' %}">Login</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 主要內容 -->
+    <div class="main-content">
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- 頁尾 -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <p><i class="fas fa-phone"></i> Phone: (02) 1234-5678</p>
+                <p><i class="fas fa-envelope"></i> Email: contact@nba-stats.com</p>
+            </div>
+            <div class="footer-section">
+                <h3>Address</h3>
+                <p><i class="fas fa-map-marker-alt"></i> 7 Xinyi Road, Xinyi District, Taipei</p>
+                <p><i class="fas fa-clock"></i> Business Hours: Mon-Fri 9:00-18:00</p>
+            </div>
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/NBA" target="_blank" class="social-link" title="NBA Facebook">
+                        <i class="fab fa-facebook"></i>
+                    </a>
+                    <a href="https://twitter.com/NBA" target="_blank" class="social-link" title="NBA Twitter">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="https://www.instagram.com/nba/" target="_blank" class="social-link" title="NBA Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="https://www.youtube.com/nba" target="_blank" class="social-link" title="NBA YouTube">
+                        <i class="fab fa-youtube"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 NBA Stats. All rights reserved.</p>
+        </div>
+    </footer>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html> 

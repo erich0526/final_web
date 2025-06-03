@@ -1,0 +1,113 @@
+{% extends 'NBA/base.html' %}
+
+{% block title %}{{ game.home_team }} vs {{ game.away_team }} - Game Details{% endblock %}
+
+{% block content %}
+<div class="game-info">
+    <h1 class="game-title">{{ game.home_team }} vs {{ game.away_team }}</h1>
+    <p class="final-score">{{ game.home_score }} - {{ game.away_score }}</p>
+    <p>{{ game.date|date:"F j, Y" }} at {{ game.venue }}</p>
+</div>
+
+<div class="stats-section">
+    <h2 class="team-title">{{ game.home_team }} Stats</h2>
+    <table class="stats-table">
+        <thead>
+            <tr>
+                <th>Player</th>
+                <th>Points</th>
+                <th>Rebounds</th>
+                <th>Assists</th>
+                <th>Steals</th>
+                <th>Blocks</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for stat in game.home_stats %}
+            <tr>
+                <td>{{ stat.player_name }}</td>
+                <td>{{ stat.points }}</td>
+                <td>{{ stat.rebounds }}</td>
+                <td>{{ stat.assists }}</td>
+                <td>{{ stat.steals }}</td>
+                <td>{{ stat.blocks }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2 class="team-title">{{ game.away_team }} Stats</h2>
+    <table class="stats-table">
+        <thead>
+            <tr>
+                <th>Player</th>
+                <th>Points</th>
+                <th>Rebounds</th>
+                <th>Assists</th>
+                <th>Steals</th>
+                <th>Blocks</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for stat in game.away_stats %}
+            <tr>
+                <td>{{ stat.player_name }}</td>
+                <td>{{ stat.points }}</td>
+                <td>{{ stat.rebounds }}</td>
+                <td>{{ stat.assists }}</td>
+                <td>{{ stat.steals }}</td>
+                <td>{{ stat.blocks }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="comments-section">
+    <h3>Comments</h3>
+    {% if user.is_authenticated %}
+        <form method="post" class="comment-form">
+            {% csrf_token %}
+            <textarea name="content" placeholder="Write your comment here..." required></textarea>
+            <button type="submit">Post Comment</button>
+        </form>
+    {% else %}
+        <div class="login-prompt">
+            Please <a href="{% url 'login' %}">login</a> to post comments.
+        </div>
+    {% endif %}
+
+    {% for comment in comments %}
+        <div class="comment {% if comment.is_pinned %}pinned{% endif %}">
+            <div class="comment-header">
+                <div class="comment-info">
+                    {% if comment.is_pinned %}
+                        <span class="pinned-badge">Pinned</span>
+                    {% endif %}
+                    <span class="comment-author">{{ comment.user.username }}</span>
+                    <span class="comment-time">{{ comment.created_at|date:"F j, Y g:i A" }}</span>
+                </div>
+                {% if user.is_staff %}
+                    <div class="comment-actions">
+                        <form method="post" style="display: inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="comment_id" value="{{ comment.id }}">
+                            <button type="submit" name="action" value="pin" class="pin-button">
+                                {% if comment.is_pinned %}Unpin{% else %}Pin{% endif %}
+                            </button>
+                            <button type="submit" name="action" value="delete" class="delete-button">Delete</button>
+                        </form>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="comment-content">
+                {{ comment.content }}
+            </div>
+        </div>
+    {% empty %}
+        <div class="no-comments">
+            No comments yet. Be the first to comment!
+        </div>
+    {% endfor %}
+</div>
+{% endblock %} 

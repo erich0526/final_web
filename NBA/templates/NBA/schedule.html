@@ -1,0 +1,103 @@
+{% extends 'NBA/base.html' %}
+{% load static %}
+
+{% block title %}NBA Schedule{% endblock %}
+
+{% block content %}
+<div class="schedule-page">
+    <h1 class="page-title">NBA Schedule</h1>
+    
+    <div class="schedule-container">
+        {% if games %}
+            {% for game in games %}
+            <div class="schedule-card" onclick="window.location.href='{% url 'NBA:game_detail' game.id %}'">
+                <div class="schedule-header">
+                    <span class="game-date">
+                        <i class="fas fa-calendar"></i>
+                        {{ game.date|date:"F j, Y" }}
+                    </span>
+                    <span class="game-time">
+                        <i class="fas fa-clock"></i>
+                        {{ game.time|time:"g:i A" }}
+                    </span>
+                </div>
+                <div class="teams">
+                    <div class="team">
+                        <div class="team-logo">
+                            {% if game.home_team == 'Lakers' %}
+                                <i class="fas fa-basketball-ball"></i>
+                            {% elif game.home_team == 'Warriors' %}
+                                <i class="fas fa-shield-alt"></i>
+                            {% elif game.home_team == 'Celtics' %}
+                                <i class="fas fa-leaf"></i>
+                            {% elif game.home_team == 'Bucks' %}
+                                <i class="fas fa-deer"></i>
+                            {% elif game.home_team == 'Heat' %}
+                                <i class="fas fa-fire"></i>
+                            {% elif game.home_team == 'Nuggets' %}
+                                <i class="fas fa-mountain"></i>
+                            {% elif game.home_team == 'Suns' %}
+                                <i class="fas fa-sun"></i>
+                            {% elif game.home_team == 'Mavericks' %}
+                                <i class="fas fa-horse"></i>
+                            {% elif game.home_team == 'Knicks' %}
+                                <i class="fas fa-city"></i>
+                            {% elif game.home_team == '76ers' %}
+                                <i class="fas fa-star"></i>
+                            {% else %}
+                                <i class="fas fa-basketball-ball"></i>
+                            {% endif %}
+                        </div>
+                        <div class="team-name">{{ game.home_team }}</div>
+                    </div>
+                    
+                    <div class="vs">VS</div>
+                    
+                    <div class="team">
+                        <div class="team-logo">
+                            {% if game.away_team == 'Lakers' %}
+                                <i class="fas fa-basketball-ball"></i>
+                            {% elif game.away_team == 'Warriors' %}
+                                <i class="fas fa-shield-alt"></i>
+                            {% elif game.away_team == 'Celtics' %}
+                                <i class="fas fa-leaf"></i>
+                            {% elif game.away_team == 'Bucks' %}
+                                <i class="fas fa-deer"></i>
+                            {% elif game.away_team == 'Heat' %}
+                                <i class="fas fa-fire"></i>
+                            {% elif game.away_team == 'Nuggets' %}
+                                <i class="fas fa-mountain"></i>
+                            {% elif game.away_team == 'Suns' %}
+                                <i class="fas fa-sun"></i>
+                            {% elif game.away_team == 'Mavericks' %}
+                                <i class="fas fa-horse"></i>
+                            {% elif game.away_team == 'Knicks' %}
+                                <i class="fas fa-city"></i>
+                            {% elif game.away_team == '76ers' %}
+                                <i class="fas fa-star"></i>
+                            {% else %}
+                                <i class="fas fa-basketball-ball"></i>
+                            {% endif %}
+                        </div>
+                        <div class="team-name">{{ game.away_team }}</div>
+                    </div>
+                </div>
+                
+                <div class="schedule-footer">
+                    <span class="game-venue">
+                        <i class="fas fa-map-marker-alt"></i>
+                        {{ game.venue }}
+                    </span>
+                    <span class="status-badge upcoming">Upcoming</span>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-games">
+                <i class="fas fa-calendar-times"></i>
+                No upcoming games scheduled
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,209 @@
+{% extends 'NBA/base.html' %}
+
+{% block title %}{{ game.home_team }} vs {{ game.away_team }} - 籃球數據網站{% endblock %}
+
+{% block content %}
+<div class="boxscore-page">
+    <div class="game-info">
+        <h1 class="game-title">{{ game.home_team }} vs {{ game.away_team }}</h1>
+        <p class="final-score">終場比分：{{ game.home_team }} {{ game.home_score }} - {{ game.away_score }} {{ game.away_team }}</p>
+        <p style="color: #666; margin-top: 10px;">{{ game.date|date:"Y年m月d日 H:i" }}</p>
+    </div>
+
+    <!-- 主隊數據 -->
+    <div class="stats-section">
+        <h2 class="team-title">{{ game.home_team }}</h2>
+        <table class="stats-table">
+            <thead>
+                <tr>
+                    <th>球員</th>
+                    <th>得分</th>
+                    <th>助攻</th>
+                    <th>籃板</th>
+                    <th>抄截</th>
+                    <th>火鍋</th>
+                    <th>出賽時間</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for player in home_players %}
+                <tr>
+                    <td>{{ player.name }}</td>
+                    <td>{{ player.points }}</td>
+                    <td>{{ player.assists }}</td>
+                    <td>{{ player.rebounds }}</td>
+                    <td>{{ player.steals }}</td>
+                    <td>{{ player.blocks }}</td>
+                    <td>{{ player.minutes_played }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 客隊數據 -->
+    <div class="stats-section">
+        <h2 class="team-title">{{ game.away_team }}</h2>
+        <table class="stats-table">
+            <thead>
+                <tr>
+                    <th>球員</th>
+                    <th>得分</th>
+                    <th>助攻</th>
+                    <th>籃板</th>
+                    <th>抄截</th>
+                    <th>火鍋</th>
+                    <th>出賽時間</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for player in away_players %}
+                <tr>
+                    <td>{{ player.name }}</td>
+                    <td>{{ player.points }}</td>
+                    <td>{{ player.assists }}</td>
+                    <td>{{ player.rebounds }}</td>
+                    <td>{{ player.steals }}</td>
+                    <td>{{ player.blocks }}</td>
+                    <td>{{ player.minutes_played }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 留言區塊 -->
+    <div class="comments-section">
+        <h3>留言區</h3>
+        {% if user.is_authenticated %}
+            <div class="comment-form">
+                <textarea id="commentContent" placeholder="發表留言..."></textarea>
+                <button onclick="submitComment()">發表留言</button>
+            </div>
+        {% else %}
+            <div class="login-prompt">
+                <p>請<a href="{% url 'login' %}">登入</a>後發表留言</p>
+            </div>
+        {% endif %}
+        
+        <div class="comments-list">
+            {% for comment in comments %}
+                <div class="comment {% if comment.is_pinned %}pinned{% endif %}">
+                    <div class="comment-header">
+                        <div class="comment-info">
+                            {% if comment.is_pinned %}
+                                <span class="pinned-badge">置頂</span>
+                            {% endif %}
+                            <span class="comment-author">{{ comment.author }}</span>
+                            <span class="comment-time">{{ comment.created_at|date:"Y-m-d H:i" }}</span>
+                        </div>
+                        {% if user.is_staff %}
+                            <div class="comment-actions">
+                                <button onclick="togglePinComment({{ comment.id }})" class="pin-button">
+                                    {% if comment.is_pinned %}取消置頂{% else %}置頂{% endif %}
+                                </button>
+                                <button onclick="deleteComment({{ comment.id }})" class="delete-button">刪除</button>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="comment-content">{{ comment.content }}</div>
+                </div>
+            {% empty %}
+                <p class="no-comments">尚無留言</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function submitComment() {
+        const content = document.getElementById('commentContent').value.trim();
+        
+        if (content === '') {
+            alert('請輸入留言內容');
+            return;
+        }
+
+        fetch('{% url "add_comment" game.id %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({
+                content: content
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();  // 重新載入頁面以顯示新留言
+            } else {
+                alert('留言失敗：' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('留言失敗，請稍後再試');
+        });
+    }
+
+    function togglePinComment(commentId) {
+        fetch(`/toggle_pin_comment/${commentId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            }
+        });
+    }
+
+    function deleteComment(commentId) {
+        if (!confirm('確定要刪除這則留言嗎？')) return;
+        
+        fetch(`/delete_comment/${commentId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            }
+        });
+    }
+
+    // 獲取 CSRF Token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // 監聽 Enter 鍵
+    document.getElementById('commentContent').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault(); // 防止換行
+            submitComment();
+        }
+    });
+</script>
+{% endblock %} 
