@@ -12,7 +12,11 @@ from django.contrib import messages
 
 def home(request):
     games = Game.objects.all().order_by('-date')[:10]
-    return render(request, 'NBA/home.html', {'games': games})
+    now = timezone.now() # 獲取當前時間
+    return render(request, 'NBA/home.html', {
+        'games': games,
+        'now': now, # 將當前時間傳給模板
+    })
 
 def game_detail(request, game_id):
     game = get_object_or_404(Game, id=game_id)
@@ -20,11 +24,15 @@ def game_detail(request, game_id):
     away_players = Player.objects.filter(game=game, team=game.away_team)
     comments = Comment.objects.filter(game=game).order_by('-is_pinned', '-created_at')
     
+    # 判斷比賽是否開始
+    is_game_started = game.date <= timezone.now()
+    
     return render(request, 'NBA/game_detail.html', {
         'game': game,
         'home_players': home_players,
         'away_players': away_players,
-        'comments': comments
+        'comments': comments,
+        'is_game_started': is_game_started, # 將判斷結果傳給模板
     })
 
 @login_required

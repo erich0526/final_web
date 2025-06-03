@@ -12,18 +12,31 @@
 </head>
 <body>
     <!-- 導航欄 -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <a href="{% url 'NBA:home' %}" class="logo">NBA Stats</a>
-            <ul class="nav-menu">
-                <li class="nav-item"><a href="{% url 'NBA:home' %}">Home</a></li>
-                <li class="nav-item"><a href="{% url 'NBA:schedule' %}">Schedule</a></li>
-                {% if user.is_authenticated %}
-                    <li class="nav-item"><a href="{% url 'NBA:logout' %}">Logout</a></li>
-                {% else %}
-                    <li class="nav-item"><a href="{% url 'NBA:login' %}">Login</a></li>
-                {% endif %}
-            </ul>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a href="{% url 'NBA:home' %}" class="navbar-brand logo">NBA Stats</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'NBA:home' %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'NBA:schedule' %}">Schedule</a>
+                    </li>
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'NBA:logout' %}">Logout</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'NBA:login' %}">Login</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
         </div>
     </nav>
 

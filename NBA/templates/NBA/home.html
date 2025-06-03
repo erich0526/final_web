@@ -16,7 +16,7 @@
                         {{ game.date|date:"F j, Y" }}
                     </span>
                     <span class="game-status {% if game.is_finished %}finished{% else %}upcoming{% endif %}">
-                        {% if game.is_finished %}Final{% else %}Upcoming{% endif %}
+                        {% if game.home_score is not None and game.away_score is not None %}ENDED{% elif game.date <= now %}Live{% else %}Upcoming{% endif %}
                     </span>
                 </div>
                 <div class="teams">

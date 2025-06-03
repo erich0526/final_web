@@ -12,25 +12,7 @@ body {
 }
 
 /* 導航欄 */
-.navbar {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    padding: 15px 0;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-    position: fixed;
-    top: 0;
-    width: 100%;
-    z-index: 1000;
-}
-
-.nav-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 20px;
-}
+/* 移除了大部分自定義導航欄樣式，依賴 Bootstrap class */
 
 .logo {
     font-size: 28px;
@@ -40,24 +22,16 @@ body {
     text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
 }
 
-.nav-menu {
-    display: flex;
-    list-style: none;
-    gap: 30px;
-}
-
-.nav-item a {
-    text-decoration: none;
-    color: #333;
-    font-weight: 500;
+/* 可以選擇性添加 nav-link 的自定義樣式，例如 hover 效果 */
+.navbar .nav-link {
     padding: 8px 16px;
     border-radius: 25px;
     transition: all 0.3s ease;
 }
 
-.nav-item a:hover {
+.navbar .nav-link:hover {
     background: #1a237e;
-    color: white;
+    color: white !important; /* 使用 !important 覆蓋 Bootstrap 預設樣式 */
     transform: translateY(-2px);
 }
 
@@ -379,10 +353,6 @@ body {
 
 /* 響應式設計 */
 @media (max-width: 768px) {
-    .nav-menu {
-        gap: 15px;
-    }
-    
     .games-grid {
         grid-template-columns: 1fr;
     }
